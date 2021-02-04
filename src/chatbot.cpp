@@ -2,6 +2,7 @@
 #include <random>
 #include <algorithm>
 #include <ctime>
+#include <cstring>
 
 #include "chatlogic.h"
 #include "graphnode.h"
@@ -12,39 +13,99 @@
 ChatBot::ChatBot()
 {
     // invalidate data handles
-    _image = nullptr;
+    _image = NULL;
     _chatLogic = nullptr;
     _rootNode = nullptr;
+    std::cout <<"The ChatBot Constructor without memroy allocation" << std::endl;
 }
 
 // constructor WITH memory allocation
 ChatBot::ChatBot(std::string filename)
 {
-    std::cout << "ChatBot Constructor" << std::endl;
-    
     // invalidate data handles
     _chatLogic = nullptr;
     _rootNode = nullptr;
-
+    std::cout <<"The ChatBot Constructor and load image into heap" << std::endl;
     // load image into heap memory
     _image = new wxBitmap(filename, wxBITMAP_TYPE_PNG);
+  
 }
 
 ChatBot::~ChatBot()
-{
-    std::cout << "ChatBot Destructor" << std::endl;
-
+{    
     // deallocate heap memory
     if(_image != NULL) // Attention: wxWidgets used NULL and not nullptr
     {
+        std::cout <<"The ChatBot deallocate image on heap" << std::endl;
         delete _image;
         _image = NULL;
     }
+    std::cout <<"The ChatBot Destructor" << std::endl;
 }
 
 //// STUDENT CODE
 ////
+ChatBot::ChatBot(ChatBot &source){
+    
+    if(_image != NULL) // Attention: wxWidgets used NULL and not nullptr
+    {
+        std::cout <<"The ChatBot deallocate image on heap" << std::endl;
+        delete _image;
+    }
+    std::memcpy(_image,source._image,sizeof(source._image));
+    _chatLogic = source._chatLogic;
+    _rootNode = source._rootNode;
+    _chatLogic = source._chatLogic;
+    _chatLogic->SetChatbotHandle(this);
+   
+    std::cout <<"The copied ChatBot is generted and loads image into heap " << std::endl;
+}
 
+ChatBot& ChatBot::operator=(const ChatBot &source){
+    if (this == &source)
+        return *this;
+    if(_image != NULL) // Attention: wxWidgets used NULL and not nullptr
+    {
+        std::cout <<"The ChatBot deallocate image on heap" << std::endl;
+        delete _image;
+    }
+    std::memcpy(_image,source._image,sizeof(source._image));
+    _chatLogic = source._chatLogic;
+    _rootNode = source._rootNode;
+    _chatLogic = source._chatLogic;
+   
+    _chatLogic->SetChatbotHandle(this);
+    std::cout <<"The copied ChatBot is generted and loads image into heap " << std::endl;
+    return *this;
+}
+
+ChatBot::ChatBot(ChatBot &&source){
+    std::cout << "MOVING ChatBot instance "<< &source << " to instance " << this << std::endl;
+    _image = source._image;
+    _chatLogic = source._chatLogic;
+    _rootNode = source._rootNode;
+    _chatLogic = source._chatLogic;
+    _chatLogic->SetChatbotHandle(this);
+    
+    source._chatLogic =nullptr;
+    source._rootNode = nullptr;
+    source._image = NULL;
+}
+
+ChatBot& ChatBot::operator=(ChatBot &&source){
+    std::cout << "= MOVING ChatBot instance "<< &source << " to instance " << this << std::endl;
+    if (this == &source)
+        return *this;
+    _image = source._image;
+    _chatLogic = source._chatLogic;
+    _rootNode = source._rootNode;
+    _chatLogic = source._chatLogic;
+    _chatLogic->SetChatbotHandle(this);
+    source._chatLogic =nullptr;
+    source._rootNode = nullptr;
+    source._image = NULL;
+    return *this;
+}
 ////
 //// EOF STUDENT CODE
 
