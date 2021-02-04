@@ -52,7 +52,7 @@ ChatBot::ChatBot(ChatBot &source){
         std::cout <<"The ChatBot deallocate image on heap" << std::endl;
         delete _image;
     }
-    std::memcpy(_image,source._image,sizeof(source._image));
+    _image = new wxBitmap(*source._image);
     _chatLogic = source._chatLogic;
     _rootNode = source._rootNode;
     _chatLogic = source._chatLogic;
@@ -69,7 +69,7 @@ ChatBot& ChatBot::operator=(const ChatBot &source){
         std::cout <<"The ChatBot deallocate image on heap" << std::endl;
         delete _image;
     }
-    std::memcpy(_image,source._image,sizeof(source._image));
+    _image = new wxBitmap(*source._image);
     _chatLogic = source._chatLogic;
     _rootNode = source._rootNode;
     _chatLogic = source._chatLogic;
